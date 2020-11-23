@@ -19,12 +19,26 @@ namespace Authentication.Controllers
             return View();
         }
 
+        [Authorize(Policy = "Claim.DoB")]
+        public IActionResult SecretPolicy()
+        {
+            return View("Secret");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult SecretRole()
+        {
+            return View("Secret");
+        }
+
         public IActionResult Authenticate()
         {
             var grandmaClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, "Ali"),
                 new Claim(ClaimTypes.Email, "Ali@mail.com"),
+                new Claim(ClaimTypes.DateOfBirth, "01/01/2000"),
+                new Claim(ClaimTypes.Role, "Admin"),
                 new Claim("Grandma.Says", "Very nice boi.")
             };
 

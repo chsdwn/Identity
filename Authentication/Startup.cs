@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Authentication.AuthorizationRequirements;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,6 +33,41 @@ namespace Authentication
                     // Default "/Account/Login"
                     config.LoginPath = "/Home/Authenticate";
                 });
+
+            services.AddAuthorization(authorizationOptions =>
+            {
+                // var defaultAuthPolicyBuilder = new AuthorizationPolicyBuilder();
+                // var defaultAuthPolicy = defaultAuthPolicyBuilder
+                //     .RequireAuthenticatedUser()
+                //     .RequireClaim(ClaimTypes.DateOfBirth)
+                //     .Build();
+
+                // authorizationOptions.DefaultPolicy = defaultAuthPolicy;
+
+
+                // authorizationOptions.AddPolicy("Claim.DoB", policyBuilder =>
+                // {
+                //     policyBuilder.RequireClaim(ClaimTypes.DateOfBirth);
+                // });
+
+
+                // authorizationOptions.AddPolicy("Claim.DoB", policyBuilder =>
+                // {
+                //     policyBuilder.AddRequirements(new CustomRequireClaim(ClaimTypes.DateOfBirth));
+                // });
+
+
+                // With extension
+                authorizationOptions.AddPolicy("Claim.DoB", policyBuilder =>
+                {
+                    policyBuilder.RequireCustomClaim(ClaimTypes.DateOfBirth);
+                });
+
+                authorizationOptions.AddPolicy("Admin", policyBuilder =>
+                    policyBuilder.RequireClaim(ClaimTypes.Role, "Admin"));
+            });
+
+            services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
 
             services.AddControllersWithViews();
         }
