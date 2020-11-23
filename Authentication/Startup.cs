@@ -4,10 +4,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Authentication.AuthorizationRequirements;
+using Authentication.Controllers;
+using Authentication.CustomPolicyProvider;
+using Authentication.Transformer;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -67,9 +72,23 @@ namespace Authentication
                     policyBuilder.RequireClaim(ClaimTypes.Role, "Admin"));
             });
 
+            services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, SecurityLevelHandler>();
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+            services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(mvcOptions =>
+            {
+                var defaultAuthPolicyBuilder = new AuthorizationPolicyBuilder();
+                var defaultAuthPolicy = defaultAuthPolicyBuilder
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                // Global Authorization Filter
+                // Login page needs to be AllowAnonymous
+                // mvcOptions.Filters.Add(new AuthorizeFilter(defaultAuthPolicy));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
