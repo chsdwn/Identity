@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Api.AuthRequirement;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 
-namespace Server
+namespace Api
 {
     public class Startup
     {
@@ -26,37 +26,25 @@ namespace Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication("OAuth")
-                .AddJwtBearer("OAuth", jwtBearerOptions =>
-                {
-                    var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
-                    var key = new SymmetricSecurityKey(secretBytes);
+            services.AddAuthentication()
+                .AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("DefaultAuth", null);
 
-                    // Catches Bearer token sends from url.
-                    // localhost:5000/home/secret?access_token=token
-                    jwtBearerOptions.Events = new JwtBearerEvents()
-                    {
-                        OnMessageReceived = messageReceivedContext =>
-                        {
-                            if (messageReceivedContext.Request.Query.ContainsKey("access_token"))
-                                messageReceivedContext.Token = messageReceivedContext.Request.Query["access_token"];
+            services.AddAuthorization(options =>
+            {
+                var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                var defaultAuthPolicy = defaultAuthBuilder
+                    .AddRequirements(new JwtRequirement())
+                    .Build();
 
+                options.DefaultPolicy = defaultAuthPolicy;
+            });
 
-                            return Task.CompletedTask;
-                        }
-                    };
+            services.AddScoped<IAuthorizationHandler, JwtRequirementHandler>();
 
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ClockSkew = TimeSpan.Zero,
-                        ValidIssuer = Constants.Issuer,
-                        ValidAudience = Constants.Audiance,
-                        IssuerSigningKey = key
-                    };
-                });
+            services.AddHttpClient()
+                .AddHttpContextAccessor();
 
-            services.AddControllersWithViews()
-                .AddRazorRuntimeCompilation();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +65,6 @@ namespace Server
 
             app.UseRouting();
 
-            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
