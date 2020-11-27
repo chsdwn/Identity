@@ -9,25 +9,34 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace IdentityServer
+namespace MvcClient
 {
     public class Startup
     {
-        public readonly IConfiguration _configuration;
-
         public Startup(IConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
         }
+
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentityServer()
-                .AddInMemoryApiResources(Configuration.GetApis())
-                .AddInMemoryClients(Configuration.GetClients())
-                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-                .AddDeveloperSigningCredential();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Cookie";
+                options.DefaultChallengeScheme = "oidc";
+            })
+                .AddCookie("Cookie")
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    options.Authority = "https://localhost:5001";
+                    options.ClientId = "client_id_mvc";
+                    options.ClientSecret = "client_secret_mvc";
+                    options.ResponseType = "code";
+                    options.SaveTokens = true;
+                });
 
             services.AddControllersWithViews();
         }
@@ -41,16 +50,16 @@ namespace IdentityServer
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseIdentityServer();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
