@@ -42,7 +42,8 @@ namespace IdentityServer
                         IdentityServer4.IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServer4.IdentityServerConstants.StandardScopes.Profile
                     },
-                    RedirectUris = { "https://localhost:8001/signin-oidc" }
+                    RedirectUris = { "https://localhost:8001/signin-oidc" },
+                    RequireConsent = false
                 }
             };
     }
