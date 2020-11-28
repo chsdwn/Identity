@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,7 +37,24 @@ namespace MvcClient
                     options.ClientSecret = "client_secret_mvc";
                     options.ResponseType = "code";
                     options.SaveTokens = true;
+
+                    // Configure cookie claim mapping
+                    options.ClaimActions.DeleteClaim("amr");
+                    options.ClaimActions.DeleteClaim("s_hash");
+                    options.ClaimActions.MapUniqueJsonKey("MvcClient.Grandma", "rc.grandma");
+
+                    // Two trips to load claims in to the cookie but the id token is smaller
+                    options.GetClaimsFromUserInfoEndpoint = true;
+
+                    // Configure scope
+                    options.Scope.Clear();
+                    options.Scope.Add("openid");
+                    options.Scope.Add("rc.scope");
+                    options.Scope.Add("ApiOne");
+                    options.Scope.Add("ApiTwo");
                 });
+
+            services.AddHttpClient();
 
             services.AddControllersWithViews();
         }
