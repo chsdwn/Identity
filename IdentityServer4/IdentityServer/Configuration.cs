@@ -69,6 +69,7 @@ namespace IdentityServer
                     ClientId = "client_id_js",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     RedirectUris = { "https://localhost:9001/home/signin" },
+                    AllowedCorsOrigins = { "https://localhost:9001" },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
