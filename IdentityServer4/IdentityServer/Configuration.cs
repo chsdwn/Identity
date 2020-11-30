@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 
 namespace IdentityServer
@@ -10,7 +11,7 @@ namespace IdentityServer
             new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
+                // new IdentityResources.Profile(),
                 new IdentityResource
                 {
                     Name = "rc.scope",
@@ -26,6 +27,12 @@ namespace IdentityServer
             {
                 new ApiResource("ApiOne"),
                 new ApiResource("ApiTwo", new string[] { "rc.api.grandma" })
+            };
+
+        public static IEnumerable<ApiScope> GetApiScopes() =>
+            new List<ApiScope>
+            {
+                new ApiScope(name: "ApiOne")
             };
 
         public static IEnumerable<Client> GetClients() =>
@@ -47,8 +54,8 @@ namespace IdentityServer
                     {
                         "ApiOne",
                         "ApiTwo",
-                        IdentityServer4.IdentityServerConstants.StandardScopes.OpenId,
-                        // IdentityServer4.IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        // IdentityServerConstants.StandardScopes.Profile,
                         "rc.scope"
                     },
                     RedirectUris = { "https://localhost:8001/signin-oidc" },
@@ -56,6 +63,19 @@ namespace IdentityServer
                     AllowOfflineAccess = true
                     // Puts all the claims in the id token
                     // AlwaysIncludeUserClaimsInIdToken = true
+                },
+                new Client
+                {
+                    ClientId = "client_id_js",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    RedirectUris = { "https://localhost:9001/home/signin" },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        "ApiOne",
+                    },
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false
                 }
             };
     }
