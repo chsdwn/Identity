@@ -50,6 +50,7 @@ namespace MvcClient
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("rc.scope");
+                    options.Scope.Add("offline_access");
                     options.Scope.Add("ApiOne");
                     options.Scope.Add("ApiTwo");
                 });

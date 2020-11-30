@@ -53,6 +53,7 @@ namespace IdentityServer
                     },
                     RedirectUris = { "https://localhost:8001/signin-oidc" },
                     RequireConsent = false,
+                    AllowOfflineAccess = true
                     // Puts all the claims in the id token
                     // AlwaysIncludeUserClaimsInIdToken = true
                 }
