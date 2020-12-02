@@ -59,8 +59,8 @@ namespace IdentityServer
 
             var assembly = typeof(Startup).Assembly.GetName().Name;
 
-            var filePath = Path.Combine(_environment.ContentRootPath, "certicate.pfx");
-            var certificate = new X509Certificate2(filePath, "12345");
+            // var filePath = Path.Combine(_environment.ContentRootPath, "certicate.pfx");
+            // var certificate = new X509Certificate2(filePath, "12345");
 
             services.AddIdentityServer()
                 .AddAspNetIdentity<IdentityUser>()
@@ -68,7 +68,6 @@ namespace IdentityServer
                 // .AddInMemoryApiScopes(Configuration.GetApiScopes())
                 // .AddInMemoryClients(Configuration.GetClients())
                 // .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-                // .AddDeveloperSigningCredential()
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseSqlite(connectionString,
@@ -79,7 +78,15 @@ namespace IdentityServer
                     options.ConfigureDbContext = b => b.UseSqlite(connectionString,
                         sql => sql.MigrationsAssembly(assembly));
                 })
-                .AddSigningCredential(certificate);
+                // .AddSigningCredential(certificate);
+                .AddDeveloperSigningCredential();
+
+            services.AddAuthentication()
+                .AddFacebook(options =>
+                {
+                    options.AppId = "appId";
+                    options.AppSecret = "secret";
+                });
 
             services.AddControllersWithViews();
         }
