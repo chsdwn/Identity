@@ -8,7 +8,7 @@ const config = {
   client_id: "client_id_js",
   redirect_uri: `${JAVASCRIPT_CLIENT_URL}/home/signin`,
   post_logout_redirect_uri: `${JAVASCRIPT_CLIENT_URL}/home/index`,
-  response_type: "id_token token",
+  response_type: "code",
   scope: "openid ApiOne ApiTwo rc.scope",
 };
 

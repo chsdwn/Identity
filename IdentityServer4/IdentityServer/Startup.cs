@@ -64,20 +64,20 @@ namespace IdentityServer
 
             services.AddIdentityServer()
                 .AddAspNetIdentity<IdentityUser>()
-                // .AddInMemoryApiResources(Configuration.GetApis())
-                // .AddInMemoryApiScopes(Configuration.GetApiScopes())
-                // .AddInMemoryClients(Configuration.GetClients())
-                // .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-                .AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseSqlite(connectionString,
-                        sql => sql.MigrationsAssembly(assembly));
-                })
-                .AddOperationalStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseSqlite(connectionString,
-                        sql => sql.MigrationsAssembly(assembly));
-                })
+                .AddInMemoryApiResources(Configuration.GetApis())
+                .AddInMemoryApiScopes(Configuration.GetApiScopes())
+                .AddInMemoryClients(Configuration.GetClients())
+                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                // .AddConfigurationStore(options =>
+                // {
+                //     options.ConfigureDbContext = b => b.UseSqlite(connectionString,
+                //         sql => sql.MigrationsAssembly(assembly));
+                // })
+                // .AddOperationalStore(options =>
+                // {
+                //     options.ConfigureDbContext = b => b.UseSqlite(connectionString,
+                //         sql => sql.MigrationsAssembly(assembly));
+                // })
                 // .AddSigningCredential(certificate);
                 .AddDeveloperSigningCredential();
 

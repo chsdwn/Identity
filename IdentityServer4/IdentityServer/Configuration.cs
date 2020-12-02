@@ -63,14 +63,15 @@ namespace IdentityServer
                     RedirectUris = { "https://localhost:8001/signin-oidc" },
                     PostLogoutRedirectUris = { "https://localhost/8001/home/index" },
                     RequireConsent = false,
-                    AllowOfflineAccess = true
+                    AllowOfflineAccess = true,
+                    RequirePkce = true
                     // Puts all the claims in the id token
                     // AlwaysIncludeUserClaimsInIdToken = true
                 },
                 new Client
                 {
                     ClientId = "client_id_js",
-                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowedGrantTypes = GrantTypes.Code,
                     RedirectUris = { "https://localhost:9001/home/signin" },
                     PostLogoutRedirectUris = { "https://localhost/9001/home/index" },
                     AllowedCorsOrigins = { "https://localhost:9001" },
@@ -82,7 +83,9 @@ namespace IdentityServer
                         "rc.scope"
                     },
                     AllowAccessTokensViaBrowser = true,
+                    RequireClientSecret = false,
                     RequireConsent = false,
+                    RequirePkce = true,
                     AccessTokenLifetime = 1
                 }
             };

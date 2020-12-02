@@ -23,43 +23,43 @@ namespace IdentityServer
 
             using (var scope = host.Services.CreateScope())
             {
-                // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-                // var user = new IdentityUser("Admin");
-                // userManager.CreateAsync(user, "12345").GetAwaiter().GetResult();
-                // userManager.AddClaimAsync(user, new Claim("rc.grandma", "big.cookie")).GetAwaiter().GetResult();
-                // userManager.AddClaimAsync(user, new Claim("rc.api.grandma", "big.api.cookie")).GetAwaiter().GetResult();
+                var user = new IdentityUser("Admin");
+                userManager.CreateAsync(user, "12345").GetAwaiter().GetResult();
+                userManager.AddClaimAsync(user, new Claim("rc.grandma", "big.cookie")).GetAwaiter().GetResult();
+                userManager.AddClaimAsync(user, new Claim("rc.api.grandma", "big.api.cookie")).GetAwaiter().GetResult();
 
-                scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+                // scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 
-                var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-                context.Database.Migrate();
-                if (!context.Clients.Any())
-                {
-                    foreach (var client in Configuration.GetClients())
-                    {
-                        context.Clients.Add(client.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
+                // var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                // context.Database.Migrate();
+                // if (!context.Clients.Any())
+                // {
+                //     foreach (var client in Configuration.GetClients())
+                //     {
+                //         context.Clients.Add(client.ToEntity());
+                //     }
+                //     context.SaveChanges();
+                // }
 
-                if (!context.IdentityResources.Any())
-                {
-                    foreach (var resource in Configuration.GetIdentityResources())
-                    {
-                        context.IdentityResources.Add(resource.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
+                // if (!context.IdentityResources.Any())
+                // {
+                //     foreach (var resource in Configuration.GetIdentityResources())
+                //     {
+                //         context.IdentityResources.Add(resource.ToEntity());
+                //     }
+                //     context.SaveChanges();
+                // }
 
-                if (!context.ApiScopes.Any())
-                {
-                    foreach (var resource in Configuration.GetApiScopes())
-                    {
-                        context.ApiScopes.Add(resource.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
+                // if (!context.ApiScopes.Any())
+                // {
+                //     foreach (var resource in Configuration.GetApiScopes())
+                //     {
+                //         context.ApiScopes.Add(resource.ToEntity());
+                //     }
+                //     context.SaveChanges();
+                // }
             }
 
             host.Run();
