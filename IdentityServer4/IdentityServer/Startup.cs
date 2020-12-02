@@ -26,9 +26,12 @@ namespace IdentityServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = "Data Source=IdentityServer.db";
+
             services.AddDbContext<AppDbContext>(dbContextOptionsBuilder =>
             {
-                dbContextOptionsBuilder.UseInMemoryDatabase("MemoryDB");
+                dbContextOptionsBuilder.UseSqlite(connectionString);
+                // dbContextOptionsBuilder.UseInMemoryDatabase("MemoryDB");
             });
 
             // AddIdentity registers the services
@@ -49,12 +52,24 @@ namespace IdentityServer
                 cookieAuthenticationOptions.LoginPath = "/Auth/Login";
             });
 
+            var assembly = typeof(Startup).Assembly.GetName().Name;
+
             services.AddIdentityServer()
                 .AddAspNetIdentity<IdentityUser>()
-                .AddInMemoryApiResources(Configuration.GetApis())
-                .AddInMemoryApiScopes(Configuration.GetApiScopes())
-                .AddInMemoryClients(Configuration.GetClients())
-                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                // .AddInMemoryApiResources(Configuration.GetApis())
+                // .AddInMemoryApiScopes(Configuration.GetApiScopes())
+                // .AddInMemoryClients(Configuration.GetClients())
+                // .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseSqlite(connectionString,
+                        sql => sql.MigrationsAssembly(assembly));
+                })
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseSqlite(connectionString,
+                        sql => sql.MigrationsAssembly(assembly));
+                })
                 .AddDeveloperSigningCredential();
 
             services.AddControllersWithViews();
