@@ -61,6 +61,7 @@ namespace IdentityServer
                         "rc.scope"
                     },
                     RedirectUris = { "https://localhost:8001/signin-oidc" },
+                    PostLogoutRedirectUris = { "https://localhost/8001/home/index" },
                     RequireConsent = false,
                     AllowOfflineAccess = true
                     // Puts all the claims in the id token
@@ -71,6 +72,7 @@ namespace IdentityServer
                     ClientId = "client_id_js",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     RedirectUris = { "https://localhost:9001/home/signin" },
+                    PostLogoutRedirectUris = { "https://localhost/9001/home/index" },
                     AllowedCorsOrigins = { "https://localhost:9001" },
                     AllowedScopes =
                     {

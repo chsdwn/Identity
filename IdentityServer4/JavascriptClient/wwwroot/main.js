@@ -6,7 +6,8 @@ const config = {
   userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
   authority: IDENTITY_SERVER_URL,
   client_id: "client_id_js",
-  redirect_uri: `${JAVASCRIPT_CLIENT_URL}/Home/SignIn`,
+  redirect_uri: `${JAVASCRIPT_CLIENT_URL}/home/signin`,
+  post_logout_redirect_uri: `${JAVASCRIPT_CLIENT_URL}/home/index`,
   response_type: "id_token token",
   scope: "openid ApiOne ApiTwo rc.scope",
 };
@@ -15,6 +16,10 @@ const userManager = new Oidc.UserManager(config);
 
 const signIn = function () {
   userManager.signinRedirect();
+};
+
+const signOut = function () {
+  userManager.signoutRedirect();
 };
 
 userManager.getUser().then((user) => {

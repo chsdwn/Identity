@@ -1,4 +1,4 @@
-## <center>URLs</center>
+## API URLs
 
 ### IdentityServer: https://localhost:5001
 
@@ -9,3 +9,7 @@
 ### MvcClient: https://localhost:8001
 
 ### JavascriptClient: https://localhost:9001
+
+## How to Create X509Certificate2
+
+### https://docs.microsoft.com/en-us/archive/blogs/kaevans/using-powershell-with-certificates

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,13 +9,16 @@ namespace IdentityServer.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IIdentityServerInteractionService _interactionService;
 
         public AuthController(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            IIdentityServerInteractionService interactionService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _interactionService = interactionService;
         }
 
         [HttpGet]
@@ -40,6 +44,20 @@ namespace IdentityServer.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout(string logoutId)
+        {
+            await _signInManager.SignOutAsync();
+
+            var logoutRequest = await _interactionService.GetLogoutContextAsync(logoutId);
+            var logoutRedirectUri = logoutRequest.PostLogoutRedirectUri;
+
+            if (string.IsNullOrEmpty(logoutRedirectUri))
+                return RedirectToAction("Index", "Home");
+
+            return Redirect(logoutRedirectUri);
         }
 
         [HttpGet]

@@ -58,6 +58,11 @@ namespace MvcClient.Controllers
             return content;
         }
 
+        public IActionResult Logout()
+        {
+            return SignOut("Cookie", "oidc");
+        }
+
         private async Task RefreshAccessToken()
         {
             var serverClient = _httpClientFactory.CreateClient();

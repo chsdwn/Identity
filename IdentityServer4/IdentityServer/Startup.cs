@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using IdentityServer.Data;
 using Microsoft.AspNetCore.Builder;
@@ -16,11 +18,13 @@ namespace IdentityServer
 {
     public class Startup
     {
-        public readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _configuration = configuration;
+            _environment = environment;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -50,9 +54,13 @@ namespace IdentityServer
             {
                 cookieAuthenticationOptions.Cookie.Name = "IdentityServer.Cookie";
                 cookieAuthenticationOptions.LoginPath = "/Auth/Login";
+                cookieAuthenticationOptions.LogoutPath = "/Auth/Logout";
             });
 
             var assembly = typeof(Startup).Assembly.GetName().Name;
+
+            var filePath = Path.Combine(_environment.ContentRootPath, "certicate.pfx");
+            var certificate = new X509Certificate2(filePath, "12345");
 
             services.AddIdentityServer()
                 .AddAspNetIdentity<IdentityUser>()
@@ -60,6 +68,7 @@ namespace IdentityServer
                 // .AddInMemoryApiScopes(Configuration.GetApiScopes())
                 // .AddInMemoryClients(Configuration.GetClients())
                 // .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                // .AddDeveloperSigningCredential()
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseSqlite(connectionString,
@@ -70,7 +79,7 @@ namespace IdentityServer
                     options.ConfigureDbContext = b => b.UseSqlite(connectionString,
                         sql => sql.MigrationsAssembly(assembly));
                 })
-                .AddDeveloperSigningCredential();
+                .AddSigningCredential(certificate);
 
             services.AddControllersWithViews();
         }
