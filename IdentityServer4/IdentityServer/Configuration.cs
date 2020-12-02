@@ -87,6 +87,23 @@ namespace IdentityServer
                     RequireConsent = false,
                     RequirePkce = true,
                     AccessTokenLifetime = 1
+                },
+                new Client
+                {
+                    ClientId = "angular",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RedirectUris = { "http://localhost:10000" },
+                    PostLogoutRedirectUris = { "http://localhost/10000" },
+                    AllowedCorsOrigins = { "http://localhost:10000" },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        "ApiOne"
+                    },
+                    AllowAccessTokensViaBrowser = true,
+                    RequireClientSecret = false,
+                    RequireConsent = false,
+                    RequirePkce = true,
                 }
             };
     }
