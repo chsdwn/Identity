@@ -32,7 +32,9 @@ namespace IdentityServer
         public static IEnumerable<ApiScope> GetApiScopes() =>
             new List<ApiScope>
             {
-                new ApiScope(name: "ApiOne")
+                new ApiScope(name: "ApiOne"),
+                new ApiScope(name: "ApiTwo"),
+                new ApiScope(name: "rc.scope")
             };
 
         public static IEnumerable<Client> GetClients() =>
@@ -74,9 +76,12 @@ namespace IdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         "ApiOne",
+                        "ApiTwo",
+                        "rc.scope"
                     },
                     AllowAccessTokensViaBrowser = true,
-                    RequireConsent = false
+                    RequireConsent = false,
+                    AccessTokenLifetime = 1
                 }
             };
     }
